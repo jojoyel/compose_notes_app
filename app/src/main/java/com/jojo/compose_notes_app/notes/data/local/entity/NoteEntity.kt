@@ -1,4 +1,4 @@
-package com.jojo.compose_notes_app.util.notes.data.local.entity
+package com.jojo.compose_notes_app.notes.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -8,6 +8,6 @@ data class NoteEntity(
     @PrimaryKey(autoGenerate = true) val id: Int? = null,
     val title: String,
     val content: String,
-    val color: Int,
+    val color: Long?,
     val favorite: Boolean
 )

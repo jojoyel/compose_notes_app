@@ -1,7 +1,7 @@
-package com.jojo.compose_notes_app.util.notes.data.mapper
+package com.jojo.compose_notes_app.notes.data.mapper
 
-import com.jojo.compose_notes_app.util.notes.data.local.entity.NoteEntity
-import com.jojo.compose_notes_app.util.notes.domain.model.Note
+import com.jojo.compose_notes_app.notes.data.local.entity.NoteEntity
+import com.jojo.compose_notes_app.notes.domain.model.Note
 
 fun NoteEntity.toNote(): Note {
     return Note(
@@ -10,5 +10,15 @@ fun NoteEntity.toNote(): Note {
         this.content,
         this.color,
         this.favorite
+    )
+}
+
+fun Note.toNoteEntity(): NoteEntity {
+    return NoteEntity(
+        id = this.id,
+        title = this.title,
+        content = this.content,
+        color = this.color,
+        favorite = this.favorite
     )
 }

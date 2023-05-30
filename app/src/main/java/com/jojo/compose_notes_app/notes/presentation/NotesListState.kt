@@ -1,3 +1,5 @@
 package com.jojo.compose_notes_app.notes.presentation
 
-data class NotesListState()
+import com.jojo.compose_notes_app.notes.domain.model.Note
+
+data class NotesListState(val notes: List<Note> = emptyList())

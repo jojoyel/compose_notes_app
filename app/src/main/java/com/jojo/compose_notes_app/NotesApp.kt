@@ -1,4 +1,7 @@
 package com.jojo.compose_notes_app
 
-class NotesApp {
-}
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
+
+@HiltAndroidApp
+class NotesApp : Application() {}

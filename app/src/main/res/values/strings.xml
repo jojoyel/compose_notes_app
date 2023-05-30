@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Notes app</string>
+    <string name="nav_notes">Notes</string>
+    <string name="action_add_note">Create note</string>
+    <string name="tip_create_note">Add your first note by clicking \"+\"</string>
+    <string name="nav_todos">TO-DOs</string>
+    <string name="nav_settings">Settings</string>
+    <string name="content_desc_favorite">Favorite note</string>
 </resources>

@@ -1,11 +1,10 @@
-package com.jojo.compose_notes_app.util.notes.data.di
+package com.jojo.compose_notes_app.notes.data.di
 
 import android.app.Application
 import androidx.room.Room
-import com.jojo.compose_notes_app.util.notes.data.local.NotesDao
-import com.jojo.compose_notes_app.util.notes.data.local.NotesDatabase
-import com.jojo.compose_notes_app.util.notes.data.repository.NotesRepositoryImpl
-import com.jojo.compose_notes_app.util.notes.domain.repository.NotesRepository
+import com.jojo.compose_notes_app.notes.data.local.NotesDatabase
+import com.jojo.compose_notes_app.notes.data.repository.NotesRepositoryImpl
+import com.jojo.compose_notes_app.notes.domain.repository.NotesRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,6 +23,6 @@ object NotesDataModule {
 
     @Provides
     @Singleton
-    fun providesNotesRepository(dao: NotesDao): NotesRepository = NotesRepositoryImpl(dao)
+    fun providesNotesRepository(db: NotesDatabase): NotesRepository = NotesRepositoryImpl(db.dao)
 
 }

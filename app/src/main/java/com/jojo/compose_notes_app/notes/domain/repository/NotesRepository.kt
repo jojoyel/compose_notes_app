@@ -1,15 +1,15 @@
-package com.jojo.compose_notes_app.util.notes.domain.repository
+package com.jojo.compose_notes_app.notes.domain.repository
 
-import com.jojo.compose_notes_app.util.notes.domain.model.Note
+import com.jojo.compose_notes_app.notes.domain.model.Note
 import kotlinx.coroutines.flow.Flow
 
 interface NotesRepository {
 
-    fun insertNote(note: Note)
+    suspend fun insertNote(note: Note)
 
-    fun deleteNote(id: Int)
+    suspend fun deleteNote(id: Int)
 
-    fun getNote(id: Int): Note
+    suspend fun getNote(id: Int): Note
 
     fun getNotes(): Flow<List<Note>>
 }
