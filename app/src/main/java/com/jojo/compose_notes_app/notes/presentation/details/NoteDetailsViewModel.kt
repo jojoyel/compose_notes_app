@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jojo.compose_notes_app.R
 import com.jojo.compose_notes_app.notes.domain.model.Note
 import com.jojo.compose_notes_app.notes.domain.use_case.NotesUseCases
 import com.jojo.compose_notes_app.util.UiEvent
@@ -84,7 +85,7 @@ class NoteDetailsViewModel @Inject constructor(
             is NoteDetailsEvent.OnCreateNoteClicked -> {
                 if (state.note.content.isBlank() && state.note.title.isBlank())
                     viewModelScope.launch {
-                        _uiEvent.send(UiEvent.GoBackWithMessage(UiText.DynamicString("Note non enregistrée"))) // TODO: res
+                        _uiEvent.send(UiEvent.GoBackWithMessage(UiText.StringResource(R.string.note_not_saved)))
                     }
                 else
                     viewModelScope.launch {
@@ -102,7 +103,7 @@ class NoteDetailsViewModel @Inject constructor(
             NoteDetailsEvent.OnDeleteClicked -> {
                 viewModelScope.launch {
                     notesUseCases.deleteNote(state.note.id!!)
-                    _uiEvent.send(UiEvent.GoBackWithMessage(UiText.DynamicString("Note supprimée"))) // TODO: res
+                    _uiEvent.send(UiEvent.GoBackWithMessage(UiText.StringResource(R.string.note_deleted)))
                 }
             }
         }

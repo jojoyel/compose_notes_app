@@ -68,6 +68,9 @@ dependencies {
     implementation(Compose.navigation)
     implementation(Testing.composePreview)
 
+    // Temp import to have access to draggable functionnalities
+    implementation("androidx.compose.material:material:1.4.3")
+
     // Room
     implementation(Room.runtime)
     implementation(Room.ktx)

@@ -1,0 +1,19 @@
+<resources>
+    <string name="nav_notes">Notes</string>
+    <string name="action_add_note">Créer un note</string>
+    <string name="tip_create_note">Créer votre première note en appuyant sur \"+\"</string>
+    <string name="nav_todos">A faire</string>
+    <string name="nav_settings">Paramètres</string>
+    <string name="content_desc_favorite">Note favorite</string>
+    <string name="my_notes">Mes notes</string>
+    <string name="ask_delete">Supprimer ?</string>
+    <string name="action_keep">No, conserver</string>
+    <string name="action_delete">Supprimer</string>
+    <string name="action_go_back">Revenir en arrière</string>
+    <string name="title">Titre</string>
+    <string name="note">Note</string>
+    <string name="action_save">Sauvgarder</string>
+    <string name="action_share">Partager</string>
+    <string name="note_deleted">Note supprimée</string>
+    <string name="note_not_saved">Note non enregistrée</string>
+</resources>

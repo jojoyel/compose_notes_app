@@ -1,5 +1,6 @@
 package com.jojo.compose_notes_app.notes.presentation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.jojo.compose_notes_app.R
 import com.jojo.compose_notes_app.notes.domain.model.Note
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NotesListScreen(state: NotesListState, noteClicked: (id: Int) -> Unit) {
     if (state.notes.isNotEmpty())
@@ -36,16 +38,28 @@ fun NotesListScreen(state: NotesListState, noteClicked: (id: Int) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
-                Text(
-                    "Mes notes", // TODO: res
-                    fontSize = MaterialTheme.typography.displaySmall.fontSize,
+                Row(
                     modifier = Modifier
-                        .fillMaxWidth(.7f)
-                        .padding(28.dp)
-                )
+                        .fillMaxWidth()
+                        .padding(28.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        stringResource(id = R.string.my_notes),
+                        fontSize = MaterialTheme.typography.displaySmall.fontSize,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = "${state.notes.size}",
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize
+                    )
+                }
             }
-            items(state.notes) {
-                NoteItem(note = it) { noteClicked(it.id!!) }
+            items(state.notes, key = { item -> item.id!! }) {
+                NoteItem(
+                    modifier = Modifier.animateItemPlacement(),
+                    note = it
+                ) { noteClicked(it.id!!) }
             }
             item {
                 Divider(Modifier.padding(vertical = 12.dp))
@@ -79,22 +93,24 @@ private fun NoteItem(
         shape = RoundedCornerShape(6.dp)
     ) {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    note.title,
-                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                    modifier = Modifier.weight(1f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                if (note.favorite)
-                    Icon(
-                        Icons.Default.Star,
-                        modifier = Modifier.padding(8.dp),
-                        contentDescription = stringResource(id = R.string.content_desc_favorite)
+            if (note.title.isNotBlank()) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        note.title,
+                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                        modifier = Modifier.weight(1f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
+                    if (note.favorite)
+                        Icon(
+                            Icons.Default.Star,
+                            modifier = Modifier.padding(8.dp),
+                            contentDescription = stringResource(id = R.string.content_desc_favorite)
+                        )
+                }
             }
-            Text(text = note.content, maxLines = 2)
+            Text(text = note.content, maxLines = if (note.title.isNotBlank()) 2 else 4)
         }
     }
 }

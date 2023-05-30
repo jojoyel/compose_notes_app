@@ -47,7 +47,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.jojo.compose_notes_app.R
 import com.jojo.compose_notes_app.ui.composables.NoBordersTextField
 import com.jojo.compose_notes_app.util.SelectableColors
 import kotlin.math.PI
@@ -77,7 +79,7 @@ fun NoteDetailsScreen(state: NoteDetailsState, onEvent: (NoteDetailsEvent) -> Un
                     textStyle = MaterialTheme.typography.titleLarge,
                     placeholder = {
                         Text(
-                            "Titre", // TODO: res
+                            stringResource(R.string.title),
                             fontSize = MaterialTheme.typography.titleLarge.fontSize
                         )
                     }
@@ -86,7 +88,7 @@ fun NoteDetailsScreen(state: NoteDetailsState, onEvent: (NoteDetailsEvent) -> Un
                 NoBordersTextField(
                     value = state.note.content,
                     onValueChange = { onEvent(NoteDetailsEvent.OnContentChanged(it)) },
-                    placeholder = { Text("Note") }, // TODO: res
+                    placeholder = { Text(stringResource(R.string.note)) },
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
@@ -101,7 +103,6 @@ fun NoteDetailsBottomAppBar(
     state: NoteDetailsState,
     onEvent: (NoteDetailsEvent) -> Unit
 ) {
-
     var panel by remember { mutableStateOf(NoteDetailsBottomAppBarPanel.MAIN) }
 
     BottomAppBar(actions = {
@@ -120,10 +121,13 @@ fun NoteDetailsBottomAppBar(
             if (state.originalNote == null) FloatingActionButton(onClick = {
                 onEvent(NoteDetailsEvent.OnCreateNoteClicked)
             }) {
-                Icon(Icons.Default.Done, contentDescription = null) // TODO: content desc
+                Icon(Icons.Default.Done, contentDescription = stringResource(R.string.action_save))
             }
             else FloatingActionButton(onClick = { }) {
-                Icon(Icons.Default.Share, contentDescription = null) // TODO: content desc
+                Icon(
+                    Icons.Default.Share,
+                    contentDescription = stringResource(R.string.action_share)
+                )
             }
         }
     })
@@ -148,7 +152,7 @@ fun BottomAppBarContent(
                         IconButton(onClick = { onPanelChange(NoteDetailsBottomAppBarPanel.DELETE) }) {
                             Icon(
                                 Icons.Default.Delete,
-                                contentDescription = null // TODO: contentDesc
+                                contentDescription = stringResource(R.string.action_delete)
                             )
                         }
                     IconButton(onClick = { onEvent(NoteDetailsEvent.OnFavoriteToggled) }) {
@@ -189,7 +193,7 @@ fun BottomAppBarContent(
                     IconButton(onClick = { onPanelChange(NoteDetailsBottomAppBarPanel.MAIN) }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = null // TODO: contentDesc
+                            contentDescription = stringResource(R.string.action_go_back)
                         )
                     }
                     Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
@@ -209,17 +213,17 @@ fun BottomAppBarContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "Supprimer ?",
+                        stringResource(R.string.ask_delete),
                         fontSize = MaterialTheme.typography.titleMedium.fontSize
-                    ) // TODO: res
+                    )
                     Spacer(modifier = Modifier.weight(1f))
                     AssistChip(
                         onClick = { onPanelChange(NoteDetailsBottomAppBarPanel.MAIN) },
-                        label = { Text("Non, conserver") })
+                        label = { Text(stringResource(R.string.action_keep)) })
                     Spacer(Modifier.width(4.dp))
                     AssistChip(
                         onClick = { onEvent(NoteDetailsEvent.OnDeleteClicked) },
-                        label = { Text("Supprimer") })
+                        label = { Text(stringResource(R.string.action_delete)) })
                 }
             }
         }
