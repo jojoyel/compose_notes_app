@@ -12,9 +12,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,20 +42,32 @@ fun NotesListScreen(state: NotesListState, noteClicked: (id: Int) -> Unit) {
         ) {
             item {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(28.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        stringResource(id = R.string.my_notes),
-                        fontSize = MaterialTheme.typography.displaySmall.fontSize,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = "${state.notes.size}",
-                        fontSize = MaterialTheme.typography.titleMedium.fontSize
-                    )
+                    Row(
+                        Modifier
+                            .weight(1f)
+                            .padding(start = 28.dp, end = 8.dp, top = 28.dp, bottom = 28.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            stringResource(id = R.string.my_notes),
+                            fontSize = MaterialTheme.typography.displaySmall.fontSize,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = "${state.notes.size}",
+                            fontSize = MaterialTheme.typography.titleMedium.fontSize
+                        )
+                    }
+                    IconButton(
+                        onClick = { /*TODO*/ },
+                        colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        Icon(Icons.Default.Sort, contentDescription = null) // TODO: contentDesc
+                    }
                 }
             }
             items(state.notes, key = { item -> item.id!! }) {
