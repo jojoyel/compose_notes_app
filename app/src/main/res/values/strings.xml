@@ -19,4 +19,13 @@
     <string name="note_not_saved">Note not saved</string>
     <string name="tip_create_todo">Add your first todo task by clicking \"+\"</string>
     <string name="action_add_todo">Create todo</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_create">Create</string>
+    <string name="action_modify">Modify</string>
+    <string name="completed">Completed</string>
+    <string name="not_completed">Not completed</string>
+    <string name="urgent">Urgent</string>
+    <string name="hint_task_name">Task name</string>
+    <string name="task">Task</string>
+    <string name="create_task">Create a task</string>
 </resources>

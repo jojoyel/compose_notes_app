@@ -22,6 +22,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -40,9 +41,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import com.jojo.compose_notes_app.R
 import com.jojo.compose_notes_app.todos.domain.model.Todo
+import com.jojo.compose_notes_app.ui.theme.NotesAppTheme
 import com.jojo.compose_notes_app.ui.urgentColor
 
 @Composable
@@ -79,9 +83,6 @@ fun TodosListScreen(state: TodosListState, event: (TodosListEvent) -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodoDialog(data: Todo? = null, onEdit: (Todo) -> Unit, onClose: () -> Unit) {
-    var title by remember { mutableStateOf(data?.title ?: "") }
-    var urgent by remember { mutableStateOf(data?.urgent ?: false) }
-
     AlertDialog(onDismissRequest = onClose) {
         Surface(
             modifier = Modifier
@@ -90,133 +91,117 @@ fun TodoDialog(data: Todo? = null, onEdit: (Todo) -> Unit, onClose: () -> Unit) 
             shape = MaterialTheme.shapes.large,
             tonalElevation = AlertDialogDefaults.TonalElevation
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                data?.let {
-                    Text(text = "Tâche")
-                    OutlinedTextField(
-                        value = title,
-                        onValueChange = { title = it },
-                        label = { Text("Titre") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Row(
-                        Modifier
-                            .clip(RoundedCornerShape(4.dp))
-                            .toggleable(
-                                value = urgent,
-                                onValueChange = { urgent = it },
-                                role = Role.Checkbox
-                            )
-                            .padding(2.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Checkbox(
-                            checked = urgent,
-                            onCheckedChange = null,
-                            modifier = Modifier.padding(2.dp)
-                        )
-                        Text(text = "Urgent", modifier = Modifier.weight(1f))
-                    }
-                    if (it.completed) {
-                        Button(onClick = {
-                            onEdit(
-                                Todo(
-                                    id = it.id,
-                                    title = title,
-                                    urgent = urgent,
-                                    completed = false
-                                )
-                            )
-                        }, modifier = Modifier.fillMaxWidth()) {
-                            Text(text = "Non terminé")
-                        }
-                    } else {
-                        Button(onClick = {
-                            onEdit(
-                                Todo(
-                                    id = it.id,
-                                    title = title,
-                                    urgent = urgent,
-                                    completed = true
-                                )
-                            )
-                        }, modifier = Modifier.fillMaxWidth()) {
-                            Icon(
-                                Icons.Default.TaskAlt,
-                                contentDescription = null
-                            ) // TODO: contentDesc
-                            Text(text = "Terminé")
-                        }
-                    }
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        TextButton(onClick = onClose) {
-                            Text(text = "Annuler")
-                        }
+            DialogContent(todo = data, onClose = onClose, onEdit = onEdit)
+        }
+    }
+}
 
-                        TextButton(onClick = {
-                            onEdit(
-                                Todo(
-                                    id = it.id,
-                                    title = title,
-                                    urgent = urgent
-                                )
-                            )
-                        }) {
-                            Text(text = "Modifier")
-                        }
-                    }
-                } ?: run {
-                    Text(
-                        text = "Créer une tâche",
-                        fontSize = MaterialTheme.typography.headlineSmall.fontSize
-                    )
-                    OutlinedTextField(
-                        value = title,
-                        onValueChange = { title = it },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Row(
-                        Modifier
-                            .clip(RoundedCornerShape(4.dp))
-                            .toggleable(
-                                value = urgent,
-                                onValueChange = { urgent = it },
-                                role = Role.Checkbox
-                            )
-                            .padding(2.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Checkbox(
-                            checked = urgent,
-                            onCheckedChange = null,
-                            modifier = Modifier.padding(2.dp)
-                        )
-                        Text(text = "Urgent", modifier = Modifier.weight(1f))
-                    }
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        TextButton(onClick = onClose) {
-                            Text(text = "Annuler")
-                        }
+@Composable
+private fun DialogContent(
+    todo: Todo?,
+    onClose: () -> Unit,
+    onEdit: (Todo) -> Unit
+) {
+    var title by remember { mutableStateOf(todo?.title ?: "") }
+    var urgent by remember { mutableStateOf(todo?.urgent ?: false) }
 
-                        TextButton(
-                            enabled = title.isNotBlank(),
-                            onClick = { onEdit(Todo(title = title, urgent = urgent)) }) {
-                            Text(text = "Ajouter")
-                        }
-                    }
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = stringResource(if (todo == null) R.string.create_task else R.string.task),
+            fontSize = MaterialTheme.typography.headlineSmall.fontSize
+        )
+        Divider(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        )
+        OutlinedTextField(
+            value = title,
+            onValueChange = { title = it },
+            label = { Text(stringResource(R.string.hint_task_name)) },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Row(
+            Modifier
+                .clip(RoundedCornerShape(4.dp))
+                .toggleable(
+                    value = urgent,
+                    onValueChange = { urgent = it },
+                    role = Role.Checkbox
+                )
+                .padding(2.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = urgent,
+                onCheckedChange = null,
+                modifier = Modifier.padding(2.dp)
+            )
+            Text(stringResource(R.string.urgent), modifier = Modifier.weight(1f))
+        }
+        if (todo != null) {
+            if (todo.completed)
+                Button(onClick = {
+                    onEdit(
+                        Todo(
+                            id = todo.id,
+                            title = title,
+                            urgent = urgent,
+                            completed = false
+                        )
+                    )
+                }, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.not_completed))
                 }
+            else
+                Button(onClick = {
+                    onEdit(
+                        Todo(
+                            id = todo.id,
+                            title = title,
+                            urgent = urgent,
+                            completed = true
+                        )
+                    )
+                }, modifier = Modifier.fillMaxWidth()) {
+                    Icon(
+                        Icons.Default.TaskAlt,
+                        contentDescription = null
+                    ) // TODO: contentDesc
+                    Text(stringResource(R.string.completed))
+                }
+        }
+
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
+        ) {
+            TextButton(onClick = onClose) {
+                Text(stringResource(R.string.action_cancel))
             }
+
+            if (todo != null)
+                TextButton(onClick = {
+                    onEdit(
+                        Todo(
+                            id = todo.id,
+                            title = title,
+                            urgent = urgent
+                        )
+                    )
+                }) {
+                    Text(stringResource(R.string.action_modify))
+                }
+            else
+                TextButton(
+                    enabled = title.isNotBlank(),
+                    onClick = { onEdit(Todo(title = title, urgent = urgent)) }) {
+                    Text(stringResource(R.string.action_create))
+                }
         }
     }
 }
@@ -235,7 +220,10 @@ private fun TodoItem(
         shape = RoundedCornerShape(6.dp),
         border = BorderStroke(
             width = 1.dp,
-            color = if (todo.urgent && !todo.completed) urgentColor(isSystemInDarkTheme())
+            color = if (todo.urgent && !todo.completed) urgentColor(isSystemInDarkTheme()).copy(
+                alpha = .5f
+            )
+            else if (!todo.completed) MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .8f)
             else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
         )
     ) {
@@ -255,5 +243,41 @@ private fun TodoItem(
                 textDecoration = if (todo.completed) TextDecoration.LineThrough else null
             )
         }
+    }
+}
+
+// Previews
+
+@Preview(
+    showSystemUi = true,
+    showBackground = true,
+    wallpaper = Wallpapers.YELLOW_DOMINATED_EXAMPLE,
+    name = "Dialog preview"
+)
+@Composable
+fun DialogPreview() {
+    NotesAppTheme {
+        TodoDialog(onEdit = {}, data = Todo(1, "Clean my desktop", false), onClose = {})
+    }
+}
+
+@Preview(
+    showSystemUi = true,
+    showBackground = true,
+    wallpaper = Wallpapers.YELLOW_DOMINATED_EXAMPLE,
+    name = "Todo items preview"
+)
+@Composable
+fun TodoItemsPreview() {
+    NotesAppTheme {
+        TodosListScreen(
+            state = TodosListState(
+                todos = listOf(
+                    Todo(1, "Clean my desktop", false),
+                    Todo(2, "Answer to important mails", true),
+                    Todo(3, "Finish my app", true, completed = true)
+                )
+            ), event = {}
+        )
     }
 }
