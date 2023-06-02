@@ -23,6 +23,7 @@ object NotesDataModule {
 
     @Provides
     @Singleton
-    fun providesNotesRepository(db: NotesDatabase): NotesRepository = NotesRepositoryImpl(db.dao)
+    fun providesNotesRepository(db: NotesDatabase): NotesRepository =
+        NotesRepositoryImpl(db.notesDao)
 
 }

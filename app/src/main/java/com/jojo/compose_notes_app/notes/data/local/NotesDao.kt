@@ -21,5 +21,4 @@ interface NotesDao {
 
     @Query("""SELECT * FROM notes""")
     fun getNotes(): Flow<List<NoteEntity>>
-
 }

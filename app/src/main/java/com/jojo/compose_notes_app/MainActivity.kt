@@ -9,6 +9,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddTask
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -20,7 +21,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -38,6 +41,9 @@ import com.jojo.compose_notes_app.notes.presentation.NotesListScreen
 import com.jojo.compose_notes_app.notes.presentation.NotesListViewModel
 import com.jojo.compose_notes_app.notes.presentation.details.NoteDetailsScreen
 import com.jojo.compose_notes_app.notes.presentation.details.NoteDetailsViewModel
+import com.jojo.compose_notes_app.todos.presentation.TodosListEvent
+import com.jojo.compose_notes_app.todos.presentation.TodosListScreen
+import com.jojo.compose_notes_app.todos.presentation.TodosListViewModel
 import com.jojo.compose_notes_app.ui.theme.NotesAppTheme
 import com.jojo.compose_notes_app.util.NavBarItems
 import com.jojo.compose_notes_app.util.Routes
@@ -45,6 +51,8 @@ import com.jojo.compose_notes_app.util.UiEvent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -59,6 +67,8 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val snackbarHostState = remember { SnackbarHostState() }
 
+                var fabClickedFlow by remember { mutableStateOf(emptyFlow<Unit>()) }
+
                 Scaffold(
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
                     bottomBar = {
@@ -69,6 +79,10 @@ class MainActivity : ComponentActivity() {
                             when (it) {
                                 FloatingActionButtonType.ADD_NOTE ->
                                     navController.navigate("${Routes.Note.route}/-1")
+
+                                FloatingActionButtonType.ADD_TODO -> {
+                                    fabClickedFlow = flow { emit(Unit) }
+                                }
                             }
                         }
                     }) { padding ->
@@ -101,9 +115,7 @@ class MainActivity : ComponentActivity() {
                                             navController.navigateUp()
                                             CoroutineScope(Dispatchers.IO).launch {
                                                 snackbarHostState.showSnackbar(
-                                                    it.message.asString(
-                                                        context
-                                                    )
+                                                    it.message.asString(context)
                                                 )
                                             }
                                         }
@@ -115,11 +127,23 @@ class MainActivity : ComponentActivity() {
 
                             NoteDetailsScreen(
                                 state = noteDetailsViewModel.state,
-                                onEvent = { noteDetailsViewModel.onEvent(it) }
+                                onEvent = noteDetailsViewModel::onEvent
                             )
                         }
                         composable(Routes.TodosList.route) {
-                            Text("A venir")
+                            val todosListViewModel = hiltViewModel<TodosListViewModel>()
+
+                            LaunchedEffect(fabClickedFlow) {
+                                fabClickedFlow.collect {
+                                    todosListViewModel.onEvent(TodosListEvent.OnOpenDialog())
+                                }
+                                fabClickedFlow = emptyFlow()
+                            }
+
+                            TodosListScreen(
+                                state = todosListViewModel.state,
+                                event = todosListViewModel::onEvent
+                            )
                         }
                         composable(Routes.Settings.route) {
                             Text("A venir")
@@ -189,11 +213,20 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
+            Routes.TodosList.route -> {
+                FloatingActionButton(onClick = { onClick(FloatingActionButtonType.ADD_TODO) }) {
+                    Icon(
+                        Icons.Default.AddTask,
+                        contentDescription = stringResource(R.string.action_add_todo)
+                    )
+                }
+            }
+
             else -> {}
         }
     }
 
     private enum class FloatingActionButtonType {
-        ADD_NOTE
+        ADD_NOTE, ADD_TODO
     }
 }

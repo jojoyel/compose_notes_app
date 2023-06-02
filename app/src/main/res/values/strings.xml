@@ -17,4 +17,6 @@
     <string name="action_share">Share</string>
     <string name="note_deleted">Note deleted</string>
     <string name="note_not_saved">Note not saved</string>
+    <string name="tip_create_todo">Add your first todo task by clicking \"+\"</string>
+    <string name="action_add_todo">Create todo</string>
 </resources>
