@@ -180,8 +180,9 @@ fun NotesListScreen(
                 items(state.notes, key = { it.title }) {
                     NoteItem(
                         modifier = Modifier
-                            .animateItemPlacement()
-                            .height(IntrinsicSize.Max),
+                            .fillMaxSize()
+                            .height(IntrinsicSize.Max)
+                            .animateItemPlacement(),
                         note = it
                     ) { noteClicked(it.id!!) }
                 }
