@@ -68,101 +68,99 @@ fun NotesListScreen(
     var filtersOpen by remember { mutableStateOf(false) }
 
     if (state.notes.isNotEmpty() || state.hasNotes)
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
+        Column(modifier = Modifier.fillMaxSize()) {
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Column(modifier = Modifier.padding(16.dp)) {
                 Row(
-                    Modifier
-                        .weight(1f)
-                        .padding(start = 28.dp, end = 8.dp, top = 28.dp, bottom = 28.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        stringResource(id = R.string.my_notes),
-                        fontSize = MaterialTheme.typography.displaySmall.fontSize,
-                        modifier = Modifier.weight(1f)
-                    )
-                    AnimatedContent(targetState = state.notes.size, transitionSpec = {
-                        if (targetState > initialState) {
-                            slideInHorizontally { width -> width } + fadeIn() with
-                                    slideOutHorizontally { width -> -width } + fadeOut()
-                        } else {
-                            slideInHorizontally { width -> -width } + fadeIn() with
-                                    slideOutHorizontally { width -> width } + fadeOut()
-                        }.using(SizeTransform(clip = false))
-                    }) {
+                    Row(
+                        Modifier
+                            .weight(1f)
+                            .padding(start = 28.dp, end = 8.dp, top = 28.dp, bottom = 28.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
-                            text = "$it",
-                            fontSize = MaterialTheme.typography.titleMedium.fontSize
+                            stringResource(id = R.string.my_notes),
+                            fontSize = MaterialTheme.typography.displaySmall.fontSize,
+                            modifier = Modifier.weight(1f)
                         )
+                        AnimatedContent(targetState = state.notes.size, transitionSpec = {
+                            if (targetState > initialState) {
+                                slideInHorizontally { width -> width } + fadeIn() with
+                                        slideOutHorizontally { width -> -width } + fadeOut()
+                            } else {
+                                slideInHorizontally { width -> -width } + fadeIn() with
+                                        slideOutHorizontally { width -> width } + fadeOut()
+                            }.using(SizeTransform(clip = false))
+                        }) {
+                            Text(
+                                text = "$it",
+                                fontSize = MaterialTheme.typography.titleMedium.fontSize
+                            )
+                        }
+                    }
+                    IconButton(
+                        onClick = { filtersOpen = !filtersOpen },
+                        colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        Icon(Icons.Default.Sort, contentDescription = null) // TODO: contentDesc
                     }
                 }
-                IconButton(
-                    onClick = { filtersOpen = !filtersOpen },
-                    colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
-                    modifier = Modifier.padding(8.dp)
-                ) {
-                    Icon(Icons.Default.Sort, contentDescription = null) // TODO: contentDesc
-                }
-            }
 
-            AnimatedVisibility(visible = filtersOpen) {
-                var selectedColor: SelectableColors? by remember { mutableStateOf(null) }
+                AnimatedVisibility(visible = filtersOpen) {
+                    var selectedColor: SelectableColors? by remember { mutableStateOf(null) }
 
-                Column {
-                    Text(text = "Colors", style = MaterialTheme.typography.bodyLarge)
-                    FlowRow(
-                        Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        FilterChip(
-                            onClick = {
-                                selectedColor = null
-                                onEvent(NotesListEvent.OnColorFilterChanged(null))
-                            },
-                            selected = selectedColor == null,
-                            label = { Text(stringResource(id = R.string.all)) })
-                        SelectableColors.values().forEach {
-                            when (it) {
-                                SelectableColors.NONE -> {
-                                    FilterChip(
-                                        onClick = {
-                                            selectedColor = it
-                                            onEvent(NotesListEvent.OnColorFilterChanged(it))
-                                        },
-                                        selected = selectedColor == it,
-                                        leadingIcon = {
-                                            Icon(
-                                                painterResource(R.drawable.dot),
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primaryContainer
-                                            )
-                                        },
-                                        label = { Text(stringResource(it.displayName)) })
-                                }
+                    Column {
+                        Text(text = "Colors", style = MaterialTheme.typography.bodyLarge)
+                        FlowRow(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            FilterChip(
+                                onClick = {
+                                    selectedColor = null
+                                    onEvent(NotesListEvent.OnColorFilterChanged(null))
+                                },
+                                selected = selectedColor == null,
+                                label = { Text(stringResource(id = R.string.all)) })
+                            SelectableColors.values().forEach {
+                                when (it) {
+                                    SelectableColors.NONE -> {
+                                        FilterChip(
+                                            onClick = {
+                                                selectedColor = it
+                                                onEvent(NotesListEvent.OnColorFilterChanged(it))
+                                            },
+                                            selected = selectedColor == it,
+                                            leadingIcon = {
+                                                Icon(
+                                                    painterResource(R.drawable.dot),
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.primaryContainer
+                                                )
+                                            },
+                                            label = { Text(stringResource(it.displayName)) })
+                                    }
 
-                                else -> {
-                                    FilterChip(
-                                        onClick = {
-                                            selectedColor = it
-                                            onEvent(NotesListEvent.OnColorFilterChanged(it))
-                                        },
-                                        selected = selectedColor == it,
-                                        leadingIcon = {
-                                            Icon(
-                                                painterResource(R.drawable.dot),
-                                                contentDescription = null,
-                                                tint = Color(it.color)
-                                            )
-                                        },
-                                        label = { Text(stringResource(it.displayName)) })
+                                    else -> {
+                                        FilterChip(
+                                            onClick = {
+                                                selectedColor = it
+                                                onEvent(NotesListEvent.OnColorFilterChanged(it))
+                                            },
+                                            selected = selectedColor == it,
+                                            leadingIcon = {
+                                                Icon(
+                                                    painterResource(R.drawable.dot),
+                                                    contentDescription = null,
+                                                    tint = Color(it.color)
+                                                )
+                                            },
+                                            label = { Text(stringResource(it.displayName)) })
+                                    }
                                 }
                             }
                         }
