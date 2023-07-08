@@ -44,7 +44,7 @@ fun MainNav(
         composable(Routes.NotesList.route) {
             val notesViewModel = hiltViewModel<NotesListViewModel>()
 
-            NotesListScreen(state = notesViewModel.state) {
+            NotesListScreen(state = notesViewModel.state, onEvent = notesViewModel::onEvent) {
                 navController.navigate("${Routes.Note.route}/$it")
             }
         }
@@ -57,7 +57,7 @@ fun MainNav(
         ) {
             val noteDetailsViewModel = hiltViewModel<NoteDetailsViewModel>()
 
-            LaunchedEffect(true) {
+            LaunchedEffect(Unit) {
                 noteDetailsViewModel.uiEvent.collect {
                     when (it) {
                         UiEvent.GoBack -> navController.navigateUp()

@@ -28,4 +28,9 @@
     <string name="hint_task_name">Task name</string>
     <string name="task">Task</string>
     <string name="create_task">Create a task</string>
+    <string name="color_none">None</string>
+    <string name="color_red">Red</string>
+    <string name="color_blue">Blue</string>
+    <string name="color_green">Green</string>
+    <string name="all">Toutes</string>
 </resources>

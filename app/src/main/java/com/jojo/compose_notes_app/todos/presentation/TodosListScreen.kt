@@ -15,6 +15,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.TaskAlt
@@ -36,10 +38,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
@@ -96,6 +101,7 @@ fun TodoDialog(data: Todo? = null, onEdit: (Todo) -> Unit, onClose: () -> Unit) 
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun DialogContent(
     todo: Todo?,
@@ -104,6 +110,8 @@ private fun DialogContent(
 ) {
     var title by remember { mutableStateOf(todo?.title ?: "") }
     var urgent by remember { mutableStateOf(todo?.urgent ?: false) }
+
+    val keyboardOptions = LocalSoftwareKeyboardController.current
 
     Column(
         modifier = Modifier.padding(16.dp),
@@ -122,7 +130,9 @@ private fun DialogContent(
             value = title,
             onValueChange = { title = it },
             label = { Text(stringResource(R.string.hint_task_name)) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = { keyboardOptions?.hide() })
         )
         Row(
             Modifier

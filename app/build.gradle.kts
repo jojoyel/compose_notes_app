@@ -66,6 +66,7 @@ dependencies {
     implementation(Compose.activity)
     implementation(Compose.viewModel)
     implementation(Compose.navigation)
+    implementation(Compose.flowRow)
     implementation(Testing.composePreview)
 
     // Temp import to have access to draggable functionnalities

@@ -12,5 +12,7 @@ object Compose {
     const val activity = "androidx.activity:activity-compose:1.7.2"
     const val viewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1"
 
+    const val flowRow = "androidx.compose.foundation:foundation-layout:1.4.3"
+
     const val composeCompilerVersion = "1.3.2"
 }
