@@ -64,9 +64,22 @@ fun TodosListScreen(state: TodosListState, event: (TodosListEvent) -> Unit) {
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(state.todos.sortedBy { it.completed }, key = { it.title }) {
+            items(state.todos.filter { !it.completed }, key = { it.title }) {
                 TodoItem(todo = it, modifier = Modifier.animateContentSize()) {
                     event(TodosListEvent.OnOpenDialog(it))
+                }
+            }
+
+            with(state.todos.filter { it.completed }) {
+                if (this.isNotEmpty()) {
+                    item {
+                        Divider(modifier = Modifier.fillMaxWidth())
+                    }
+                    items(this, key = { it.title }) {
+                        TodoItem(todo = it, modifier = Modifier.animateContentSize()) {
+                            event(TodosListEvent.OnOpenDialog(it))
+                        }
+                    }
                 }
             }
         }
