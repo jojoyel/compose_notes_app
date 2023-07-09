@@ -1,5 +1,6 @@
 package com.jojo.compose_notes_app.todos.presentation
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.TaskAlt
 import androidx.compose.material3.AlertDialog
@@ -27,6 +29,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -61,8 +64,8 @@ fun TodosListScreen(state: TodosListState, event: (TodosListEvent) -> Unit) {
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(state.todos, key = { item -> item.id!! }) {
-                TodoItem(todo = it) {
+            items(state.todos.sortedBy { it.completed }, key = { it.title }) {
+                TodoItem(todo = it, modifier = Modifier.animateContentSize()) {
                     event(TodosListEvent.OnOpenDialog(it))
                 }
             }
@@ -80,14 +83,20 @@ fun TodosListScreen(state: TodosListState, event: (TodosListEvent) -> Unit) {
     if (state.editionDialogVisible)
         TodoDialog(
             data = state.editionDialogData,
-            onEdit = { event(TodosListEvent.OnCreateTask(it)) }) {
+            onEdit = { event(TodosListEvent.OnCreateTask(it)) },
+            onDelete = { event(TodosListEvent.OnDeleteTask(it)) }) {
             event(TodosListEvent.OnCloseDialog)
         }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodoDialog(data: Todo? = null, onEdit: (Todo) -> Unit, onClose: () -> Unit) {
+fun TodoDialog(
+    data: Todo? = null,
+    onEdit: (Todo) -> Unit,
+    onDelete: (Todo) -> Unit,
+    onClose: () -> Unit
+) {
     AlertDialog(onDismissRequest = onClose) {
         Surface(
             modifier = Modifier
@@ -96,7 +105,7 @@ fun TodoDialog(data: Todo? = null, onEdit: (Todo) -> Unit, onClose: () -> Unit) 
             shape = MaterialTheme.shapes.large,
             tonalElevation = AlertDialogDefaults.TonalElevation
         ) {
-            DialogContent(todo = data, onClose = onClose, onEdit = onEdit)
+            DialogContent(todo = data, onClose = onClose, onDelete = onDelete, onEdit = onEdit)
         }
     }
 }
@@ -106,6 +115,7 @@ fun TodoDialog(data: Todo? = null, onEdit: (Todo) -> Unit, onClose: () -> Unit) 
 private fun DialogContent(
     todo: Todo?,
     onClose: () -> Unit,
+    onDelete: (Todo) -> Unit,
     onEdit: (Todo) -> Unit
 ) {
     var title by remember { mutableStateOf(todo?.title ?: "") }
@@ -117,15 +127,21 @@ private fun DialogContent(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(
-            text = stringResource(if (todo == null) R.string.create_task else R.string.task),
-            fontSize = MaterialTheme.typography.headlineSmall.fontSize
-        )
-        Divider(
-            Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Text(
+                text = stringResource(if (todo == null) R.string.create_task else R.string.task),
+                fontSize = MaterialTheme.typography.headlineSmall.fontSize,
+                modifier = Modifier.weight(1f)
+            )
+            if (todo != null)
+                IconButton(onClick = { onDelete(todo) }) {
+                    Icon(Icons.Default.Delete, contentDescription = null) // TODO: content desc
+                }
+        }
+        Divider(Modifier.fillMaxWidth())
         OutlinedTextField(
             value = title,
             onValueChange = { title = it },
@@ -267,7 +283,11 @@ private fun TodoItem(
 @Composable
 fun DialogPreview() {
     NotesAppTheme {
-        TodoDialog(onEdit = {}, data = Todo(1, "Clean my desktop", false), onClose = {})
+        TodoDialog(
+            onEdit = {},
+            data = Todo(1, "Clean my desktop", false),
+            onDelete = {},
+            onClose = {})
     }
 }
 

@@ -24,14 +24,13 @@ import com.jojo.compose_notes_app.util.Routes
 import com.jojo.compose_notes_app.util.UiEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 @Composable
 fun MainNav(
     navController: NavHostController,
     snackbarHostState: SnackbarHostState,
-    fabClickedFlow: Flow<Unit>,
+    setFabOnClick: (() -> Unit) -> Unit,
     padding: PaddingValues
 ) {
     val context = LocalContext.current
@@ -83,8 +82,8 @@ fun MainNav(
         composable(Routes.TodosList.route) {
             val todosListViewModel = hiltViewModel<TodosListViewModel>()
 
-            LaunchedEffect(fabClickedFlow) {
-                fabClickedFlow.collect {
+            LaunchedEffect(Unit) {
+                setFabOnClick {
                     todosListViewModel.onEvent(TodosListEvent.OnOpenDialog())
                 }
             }

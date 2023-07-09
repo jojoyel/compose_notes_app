@@ -46,6 +46,8 @@ fun NotesApp(windowSizeClass: WindowWidthSizeClass) {
     NotesAppTheme {
         val context = LocalContext.current
 
+        val (fabOnClick, setFabOnClick) = remember { mutableStateOf<(() -> Unit)?>(null) }
+
         val navController = rememberNavController()
         val snackbarHostState = remember { SnackbarHostState() }
 
@@ -68,12 +70,13 @@ fun NotesApp(windowSizeClass: WindowWidthSizeClass) {
                                     navController.navigate("${Routes.Note.route}/-1")
 
                                 FloatingActionButtonType.ADD_TODO ->
-                                    fabClickedFlow = flow { emit(Unit) }
+                                    fabOnClick?.invoke()
+//                                    fabClickedFlow = flow { emit(Unit) }
                             }
                         }
                     }
                 ) { padding ->
-                    MainNav(navController, snackbarHostState, fabClickedFlow, padding)
+                    MainNav(navController, snackbarHostState, setFabOnClick, padding)
                 }
             }
 
@@ -121,7 +124,7 @@ fun NotesApp(windowSizeClass: WindowWidthSizeClass) {
                             }
                         }
                     ) { padding ->
-                        MainNav(navController, snackbarHostState, fabClickedFlow, padding)
+                        MainNav(navController, snackbarHostState, setFabOnClick, padding)
                     }
                 }
             }

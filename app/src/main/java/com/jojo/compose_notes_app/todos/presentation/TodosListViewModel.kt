@@ -37,6 +37,13 @@ class TodosListViewModel @Inject constructor(private val useCases: TodosUseCases
 
             is TodosListEvent.OnOpenDialog -> state =
                 state.copy(editionDialogVisible = true, editionDialogData = event.todo)
+
+            is TodosListEvent.OnDeleteTask -> {
+                viewModelScope.launch {
+                    useCases.deleteTodo(event.todo)
+                    state = state.copy(editionDialogVisible = false, editionDialogData = null)
+                }
+            }
         }
     }
 }
